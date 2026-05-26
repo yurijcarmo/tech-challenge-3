@@ -1,6 +1,6 @@
 
 # ============================================================
-# CONTA PESSOAL — código original (comentado para referência)
+# CONTA PESSOAL - código original (comentado para referência)
 # IRSA: vincula a role ao ServiceAccount aws-load-balancer-controller
 # via trust policy OIDC federada, restringindo ao namespace kube-system
 # ============================================================
@@ -39,7 +39,7 @@
 # }
 
 # ============================================================
-# AWS ACADEMY — referencia a LabRole pré-existente
+# AWS ACADEMY - referencia a LabRole pré-existente
 # ============================================================
 data "aws_iam_role" "lab_role" {
   name = "LabRole"

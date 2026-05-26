@@ -1,4 +1,4 @@
-name: CI — targeting-service
+name: CI - targeting-service
 
 on:
   push:

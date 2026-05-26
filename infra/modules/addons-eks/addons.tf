@@ -184,7 +184,7 @@ resource "aws_iam_policy" "external_dns" {
 }
 
 # ============================================================
-# CONTA PESSOAL — código original (comentado para referência)
+# CONTA PESSOAL - código original (comentado para referência)
 # IRSA para ExternalDNS com trust policy OIDC federada
 # ============================================================
 # resource "aws_iam_role" "external_dns" {
@@ -309,7 +309,7 @@ resource "aws_iam_policy" "external_secrets" {
 }
 
 # ============================================================
-# CONTA PESSOAL — código original (comentado para referência)
+# CONTA PESSOAL - código original (comentado para referência)
 # IRSA para External Secrets Operator com trust policy OIDC federada
 # ============================================================
 # resource "aws_iam_role" "external_secrets" {

@@ -1,5 +1,5 @@
 # ============================================================
-# CONTA PESSOAL — código original (comentado para referência)
+# CONTA PESSOAL - código original (comentado para referência)
 # ============================================================
 # resource "aws_iam_role" "eks_cluster_role" {
 #   name = "${var.prefix}-eks-cluster-role"
@@ -28,7 +28,7 @@
 # }
 
 # ============================================================
-# AWS ACADEMY — referencia a LabRole pré-existente
+# AWS ACADEMY - referencia a LabRole pré-existente
 # ============================================================
 data "aws_iam_role" "lab_role" {
   name = "LabRole"
