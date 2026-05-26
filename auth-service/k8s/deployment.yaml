@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: auth-service
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      initContainers:
+        - name: db-init
+          image: postgres:15-alpine
+          command:
+            - sh
+            - -c
+            - psql "$DATABASE_URL" -f /migrations/init.sql
+          envFrom:
+            - configMapRef:
+                name: auth-service-config
+            - secretRef:
+                name: auth-service-secrets
+          volumeMounts:
+            - name: db-init
+              mountPath: /migrations
+          containers:
+            - name: auth-service
+              image: 629617923234.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+              imagePullPolicy: Always
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "100Mi"
+                limits:
+                  cpu: "200m"
+                  memory: "250Mi"
+          ports:
+            - containerPort: 8001
+          envFrom:
+            - configMapRef:
+                name: auth-service-config
+            - secretRef:
+                name: auth-service-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+      volumes:
+        - name: db-init
+          configMap:
+            name: auth-service-db-init
