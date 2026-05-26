@@ -1,0 +1,19 @@
+name: CI — flag-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "flag-service/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "flag-service/**"
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_ci-python.yml
+    with:
+      service: flag-service
+      ecr_repo: flag-service
+    secrets: inherit

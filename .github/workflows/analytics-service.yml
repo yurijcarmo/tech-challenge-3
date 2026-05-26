@@ -1,0 +1,19 @@
+name: CI — analytics-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "analytics-service/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "analytics-service/**"
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_ci-python.yml
+    with:
+      service: analytics-service
+      ecr_repo: analytics-service
+    secrets: inherit

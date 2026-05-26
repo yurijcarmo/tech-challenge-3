@@ -1,0 +1,19 @@
+name: CI — auth-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "auth-service/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "auth-service/**"
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_ci-go.yml
+    with:
+      service: auth-service
+      ecr_repo: auth-service
+    secrets: inherit
