@@ -1,9 +1,10 @@
 resource "helm_release" "metrics_server" {
-  name       = "metrics-server"
-  repository = "https://kubernetes-sigs.github.io/metrics-server/"
-  chart      = "metrics-server"
-  version    = "3.12.2"
-  namespace  = "kube-system"
+  name         = "metrics-server"
+  repository   = "https://kubernetes-sigs.github.io/metrics-server/"
+  chart        = "metrics-server"
+  version      = "3.12.2"
+  namespace    = "kube-system"
+  force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
 }
 
 locals {
@@ -16,11 +17,12 @@ resource "kubernetes_namespace_v1" "ingress_nginx" {
 }
 
 resource "helm_release" "ingress_nginx" {
-  name       = "ingress-nginx"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  version    = "4.10.1"
-  namespace  = "ingress-nginx"
+  name         = "ingress-nginx"
+  repository   = "https://kubernetes.github.io/ingress-nginx"
+  chart        = "ingress-nginx"
+  version      = "4.10.1"
+  namespace    = "ingress-nginx"
+  force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
 
   set = [
     {
