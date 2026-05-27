@@ -25,11 +25,13 @@ variable "oidc" {
 # route53_zone_id removido — zona agora resolvida via data "aws_route53_zone" pelo nome do domínio
 
 variable "argocd_domain" {
-  description = "Dominio completo para o ArgoCD (ex: argocd.exemplo.com)"
+  description = "Dominio completo para o ArgoCD (ex: argocd.exemplo.com) — usado apenas para referência, sem DNS"
   type        = string
+  default     = ""
 }
 
 variable "apps_domain" {
-  description = "Dominio completo para as apps (ex: desafio.exemplo.com)"
+  description = "Dominio completo para as apps — usado apenas para referência, sem DNS"
   type        = string
+  default     = ""
 }

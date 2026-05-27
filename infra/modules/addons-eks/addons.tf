@@ -7,66 +7,8 @@ resource "helm_release" "metrics_server" {
 }
 
 locals {
-  oidc               = split("/", var.oidc)[4]
-  argocd_root_domain = join(".", slice(split(".", var.argocd_domain), 1, length(split(".", var.argocd_domain))))
+  oidc = split("/", var.oidc)[4]
 }
-
-resource "aws_acm_certificate" "argocd" {
-  domain_name       = var.argocd_domain
-  validation_method = "DNS"
-
-  tags = var.tags
-}
-
-resource "aws_route53_record" "argocd_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.argocd.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = aws_route53_zone.main.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
-}
-
-resource "aws_acm_certificate_validation" "argocd" {
-  certificate_arn         = aws_acm_certificate.argocd.arn
-  validation_record_fqdns = [for record in aws_route53_record.argocd_validation : record.fqdn]
-}
-
-resource "aws_acm_certificate" "apps" {
-  domain_name       = var.apps_domain
-  validation_method = "DNS"
-
-  tags = var.tags
-}
-
-resource "aws_route53_record" "apps_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.apps.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = aws_route53_zone.main.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.record]
-}
-
-resource "aws_acm_certificate_validation" "apps" {
-  certificate_arn         = aws_acm_certificate.apps.arn
-  validation_record_fqdns = [for record in aws_route53_record.apps_validation : record.fqdn]
-}
-
 resource "kubernetes_namespace_v1" "ingress_nginx" {
   metadata {
     name = "ingress-nginx"
@@ -110,26 +52,6 @@ resource "helm_release" "ingress_nginx" {
       value = "internet-facing"
     },
     {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
-      value = aws_acm_certificate_validation.apps.certificate_arn
-    },
-    {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
-      value = "https"
-    },
-    {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol"
-      value = "http"
-    },
-    {
-      name  = "controller.service.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname"
-      value = var.apps_domain
-    },
-    {
-      name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-negotiation-policy"
-      value = "ELBSecurityPolicy-2016-08"
-    },
-    {
       name  = "controller.service.ports.http"
       value = "80"
     },
@@ -150,130 +72,6 @@ resource "helm_release" "ingress_nginx" {
 
   depends_on = [
     kubernetes_namespace_v1.ingress_nginx,
-    aws_acm_certificate_validation.apps
-  ]
-}
-
-
-resource "aws_iam_policy" "external_dns" {
-  name        = "${var.project}-external-dns"
-  description = "Policy for ExternalDNS to manage Route53 records"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "route53:ChangeResourceRecordSets"
-        ]
-        Resource = [
-          "arn:aws:route53:::hostedzone/${aws_route53_zone.main.zone_id}"
-        ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "route53:ListHostedZones",
-          "route53:ListResourceRecordSets"
-        ]
-        Resource = ["*"]
-      }
-    ]
-  })
-}
-
-# ============================================================
-# CONTA PESSOAL - código original (comentado para referência)
-# IRSA para ExternalDNS com trust policy OIDC federada
-# ============================================================
-# resource "aws_iam_role" "external_dns" {
-#   name               = "${var.project}-external-dns"
-#   description        = "IAM role for ExternalDNS"
-#   assume_role_policy = <<EOF
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Effect": "Allow",
-#       "Principal": {
-#         "Federated": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.eks.${data.aws_region.current.region}.amazonaws.com/id/${local.oidc}"
-#       },
-#       "Action": "sts:AssumeRoleWithWebIdentity",
-#       "Condition": {
-#         "StringEquals": {
-#           "oidc.eks.${data.aws_region.current.region}.amazonaws.com/id/${local.oidc}:aud": "sts.amazonaws.com",
-#           "oidc.eks.${data.aws_region.current.region}.amazonaws.com/id/${local.oidc}:sub": "system:serviceaccount:kube-system:external-dns"
-#         }
-#       }
-#     }
-#   ]
-# }
-# EOF
-#
-#   tags = merge(var.tags, {
-#     Name = "${var.project}-external-dns"
-#   })
-# }
-#
-# resource "aws_iam_role_policy_attachment" "external_dns" {
-#   role       = aws_iam_role.external_dns.name
-#   policy_arn = aws_iam_policy.external_dns.arn
-# }
-
-resource "kubernetes_service_account_v1" "external_dns" {
-  metadata {
-    name      = "external-dns"
-    namespace = "kube-system"
-    annotations = {
-      "eks.amazonaws.com/role-arn" = data.aws_iam_role.lab_role.arn
-    }
-  }
-}
-
-resource "helm_release" "external_dns" {
-  name       = "external-dns"
-  repository = "https://kubernetes-sigs.github.io/external-dns/"
-  chart      = "external-dns"
-  version    = "1.14.5"
-  namespace  = "kube-system"
-
-  values = [
-    yamlencode({
-      sources       = ["ingress"]
-      domainFilters = [local.argocd_root_domain]
-    })
-  ]
-
-  set = [
-    {
-      name  = "provider"
-      value = "aws"
-    },
-    {
-      name  = "policy"
-      value = "upsert-only"
-    },
-    {
-      name  = "registry"
-      value = "txt"
-    },
-    {
-      name  = "txtOwnerId"
-      value = var.project
-    },
-    {
-      name  = "serviceAccount.create"
-      value = "false"
-    },
-    {
-      name  = "serviceAccount.name"
-      value = kubernetes_service_account_v1.external_dns.metadata[0].name
-    }
-  ]
-
-  depends_on = [
-    kubernetes_service_account_v1.external_dns
   ]
 }
 
@@ -468,16 +266,12 @@ resource "helm_release" "argocd" {
 
   values = [
     yamlencode({
-      global = {
-        domain = var.argocd_domain
-      }
       configs = {
         secret = {
           createSecret = true
           argocdServerSecretkey = random_password.argocd_server_secretkey.result
         }
         cm = {
-          url                  = "https://${var.argocd_domain}"
           "accounts.terraform" = "apiKey, login"
         }
         params = {
@@ -487,73 +281,24 @@ resource "helm_release" "argocd" {
           "policy.csv" = "g, terraform, role:admin"
         }
       }
-      server = {
-        extraArgs = ["--insecure"]
-        ingress = {
-          hosts = [
-            {
-              host  = var.argocd_domain
-              paths = ["/"]
-            }
-          ]
-        }
-      }
     })
   ]
 
   set = [
     {
       name  = "server.service.type"
-      value = "ClusterIP"
+      value = "LoadBalancer"
     },
     {
       name  = "server.insecure"
       value = "true"
-    },
-    {
-      name  = "server.ingress.enabled"
-      value = "true"
-    },
-    {
-      name  = "server.ingress.ingressClassName"
-      value = "alb"
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/scheme"
-      value = "internet-facing"
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/target-type"
-      value = "ip"
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/listen-ports"
-      value = "[{\"HTTPS\":443}]"
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/ssl-redirect"
-      value = "443"
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/healthcheck-path"
-      value = "/"
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
-      value = aws_acm_certificate_validation.argocd.certificate_arn
-    },
-    {
-      name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/backend-protocol"
-      value = "HTTP"
-    },
-    {
-      name  = "server.ingress.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname"
-      value = var.argocd_domain
     }
   ]
 
+  # AWS ACADEMY: sem dominio - ArgoCD exposto via LoadBalancer HTTP
+  # Apos apply: kubectl get svc argocd-server -n argocd -o wide
+
   depends_on = [
-    kubernetes_namespace_v1.argocd,
-    aws_acm_certificate_validation.argocd
+    kubernetes_namespace_v1.argocd
   ]
 }
