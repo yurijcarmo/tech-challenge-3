@@ -22,7 +22,8 @@ resource "helm_release" "ingress_nginx" {
   chart        = "ingress-nginx"
   version      = "4.10.1"
   namespace    = "ingress-nginx"
-  force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
+  force_update = true
+  replace      = true # AWS ACADEMY: substitui release em estado failed # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
 
   set = [
     {
@@ -161,6 +162,7 @@ resource "helm_release" "external_secrets" {
   chart   = "oci://ghcr.io/external-secrets/charts/external-secrets"
   version = "0.10.4"
   namespace    = "external-secrets"
+  replace      = true # AWS ACADEMY: substitui release em estado failed
   wait         = true
   timeout      = 600
   force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
@@ -193,6 +195,7 @@ resource "helm_release" "keda" {
   version      = "2.15.0"
   namespace    = "keda"
   force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
+  replace      = true # AWS ACADEMY: substitui release em estado failed
 
   set = [
     {
