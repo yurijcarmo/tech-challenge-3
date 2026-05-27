@@ -39,11 +39,7 @@ func (a *App) validateKeyHandler(w http.ResponseWriter, r *http.Request) {
 	// Calcula o hash da chave recebida
 	keyHash := hashAPIKey(keyString)
 
-	// ==>
-	query := "SELECT id FROM api_keys WHERE key_hash = '" + keyHash + "' AND is_active = true"
-	err := a.DB.QueryRow(query).Scan(&id)
-
-	// Verifica se o hash existe no banco de dados (query parametrizada - versão segura)
+	// Verifica se o hash existe no banco de dados
 	var id int
 	err := a.DB.QueryRow("SELECT id FROM api_keys WHERE key_hash = $1 AND is_active = true", keyHash).Scan(&id)
 	if err != nil {
