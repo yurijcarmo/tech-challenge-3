@@ -22,10 +22,7 @@ variable "oidc" {
   type        = string
 }
 
-variable "route53_zone_id" {
-  description = "Hosted Zone ID do Route53 para o dominio do ArgoCD"
-  type        = string
-}
+# route53_zone_id removido — zona agora resolvida via data "aws_route53_zone" pelo nome do domínio
 
 variable "argocd_domain" {
   description = "Dominio completo para o ArgoCD (ex: argocd.exemplo.com)"

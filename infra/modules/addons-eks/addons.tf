@@ -27,7 +27,7 @@ resource "aws_route53_record" "argocd_validation" {
     }
   }
 
-  zone_id = var.route53_zone_id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = each.value.name
   type    = each.value.type
   ttl     = 60
@@ -55,7 +55,7 @@ resource "aws_route53_record" "apps_validation" {
     }
   }
 
-  zone_id = var.route53_zone_id
+  zone_id = data.aws_route53_zone.main.zone_id
   name    = each.value.name
   type    = each.value.type
   ttl     = 60
@@ -168,7 +168,7 @@ resource "aws_iam_policy" "external_dns" {
           "route53:ChangeResourceRecordSets"
         ]
         Resource = [
-          "arn:aws:route53:::hostedzone/${var.route53_zone_id}"
+          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.main.zone_id}"
         ]
       },
       {
@@ -357,13 +357,14 @@ resource "kubernetes_service_account_v1" "external_secrets" {
 }
 
 resource "helm_release" "external_secrets" {
-  name       = "external-secrets"
-  repository = "https://charts.external-secrets.io"
-  chart      = "external-secrets"
-  version    = "0.10.4"
-  namespace  = "external-secrets"
-  wait       = true
-  timeout    = 600
+  name         = "external-secrets"
+  repository   = "https://charts.external-secrets.io"
+  chart        = "external-secrets"
+  version      = "0.10.4"
+  namespace    = "external-secrets"
+  wait         = true
+  timeout      = 600
+  force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
 
   set = [
     {
@@ -387,11 +388,12 @@ resource "helm_release" "external_secrets" {
 }
 
 resource "helm_release" "keda" {
-  name       = "keda"
-  repository = "https://kedacore.github.io/charts"
-  chart      = "keda"
-  version    = "2.15.0"
-  namespace  = "keda"
+  name         = "keda"
+  repository   = "https://kedacore.github.io/charts"
+  chart        = "keda"
+  version      = "2.15.0"
+  namespace    = "keda"
+  force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
 
   set = [
     {

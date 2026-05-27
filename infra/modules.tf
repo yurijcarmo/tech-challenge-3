@@ -160,7 +160,6 @@ module "addons-eks" {
 
   eks_cluster_name = module.eks_cluster.eks_cluster_name
   oidc             = module.eks_cluster.oidc
-  route53_zone_id  = var.route53_zone_id
   argocd_domain    = var.argocd_domain
   apps_domain      = var.apps_domain
 }
