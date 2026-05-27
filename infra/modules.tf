@@ -168,9 +168,10 @@ module "addons-eks" {
 module "apps" {
   source = "./modules/apps"
 
-  argocd_repo_url = var.argocd_repo_url
-  apps_domain     = var.apps_domain
-  depends_on      = [module.addons-eks]
+  argocd_repo_url  = var.argocd_repo_url
+  apps_domain      = var.apps_domain
+  eks_cluster_name = module.eks_cluster.eks_cluster_name
+  depends_on       = [module.addons-eks]
 
   apps = [
     {

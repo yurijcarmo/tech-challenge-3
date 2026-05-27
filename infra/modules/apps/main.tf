@@ -49,47 +49,46 @@ resource "argocd_application" "apps" {
   ]
 }
 
-resource "kubernetes_manifest" "apps_ingress" {
+resource "null_resource" "apps_ingress" {
   for_each = local.apps_by_name
 
-  manifest = {
-    apiVersion = "networking.k8s.io/v1"
-    kind       = "Ingress"
-    metadata = {
-      name      = "${each.value.name}-ingress"
-      namespace = each.value.namespace
-      annotations = {
-        "nginx.ingress.kubernetes.io/use-regex"          = "true"
-        "nginx.ingress.kubernetes.io/rewrite-target"     = "/$2"
-        "nginx.ingress.kubernetes.io/proxy-read-timeout" = "60"
-        "nginx.ingress.kubernetes.io/proxy-send-timeout" = "60"
-        "external-dns.alpha.kubernetes.io/hostname"      = var.apps_domain
-      }
-    }
-    spec = {
-      ingressClassName = var.ingress_class_name
-      rules = [
-        {
-          host = var.apps_domain
-          http = {
-            paths = [
-              {
-                path     = "${each.value.path_prefix}(/|$)(.*)"
-                pathType = "Prefix"
-                backend = {
-                  service = {
-                    name = each.value.name
-                    port = {
-                      number = each.value.port
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      ]
-    }
+  triggers = {
+    app_name    = each.value.name
+    apps_domain = var.apps_domain
+    path_prefix = each.value.path_prefix
+    port        = each.value.port
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      aws eks update-kubeconfig --name ${var.eks_cluster_name} --region ${var.aws_region}
+      kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${each.value.name}-ingress
+  namespace: ${each.value.namespace}
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    external-dns.alpha.kubernetes.io/hostname: ${var.apps_domain}
+spec:
+  ingressClassName: ${var.ingress_class_name}
+  rules:
+  - host: ${var.apps_domain}
+    http:
+      paths:
+      - path: ${each.value.path_prefix}(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: ${each.value.name}
+            port:
+              number: ${each.value.port}
+EOF
+    EOT
   }
 
   depends_on = [
