@@ -26,13 +26,13 @@ Esse repositório reúne a solução da **Fase 2 do Tech Challenge**: transforma
 1. **Infraestrutura Terraform**  
    - Provisionamos VPC, subnets, EKS, RDS (3 Postgres), ElastiCache e DynamoDB.  
    - Instalamos Metrics Server, ExternalDNS, External Secrets, AWS Load Balancer Controller e KEDA via Helm.  
-   - Carregamos ACM + domínio `desafio.jhousyfran.click` para ingress NGINX com rewrite e ALB NLB.
+   - Carregamos ACM + domínio `desafio.yuricarmo.click` para ingress NGINX com rewrite e ALB NLB.
 2. **Microserviços & Deploy**  
    - Cada serviço roda em namespace próprio, consome secrets do Secrets Manager e, quando necessário, executa migrations via initContainer.  
    - Ajustamos health/readiness probes, HPAs, ScaledObject do KEDA e ExternalSecret para credenciais e SQS.
 3. **Domínio, Argo CD e acesso externo**  
-   - O NGINX expõe todos os serviços sob o mesmo host (`desafio.jhousyfran.click`) com paths `/auth`, `/flag`, `/targeting`, `/evaluation` e `/analytics`.  
-   - Implantamos o Argo CD para gerenciar os manifests (`infra/modules/apps/*`). O token gerado usando a conta `terraform` (configurada via Helm), aponta o provider Argo CD para `https://argocd.jhousyfran.click`, e todas as aplicações são reconciliadas automaticamente após os pushes. O script `test-flow-eks.sh` também depende desse domínio, então a sincronização via Argo CD garante que os serviços estejam prontos antes dos testes.
+   - O NGINX expõe todos os serviços sob o mesmo host (`desafio.yuricarmo.click`) com paths `/auth`, `/flag`, `/targeting`, `/evaluation` e `/analytics`.  
+   - Implantamos o Argo CD para gerenciar os manifests (`infra/modules/apps/*`). O token gerado usando a conta `terraform` (configurada via Helm), aponta o provider Argo CD para `https://argocd.yuricarmo.click`, e todas as aplicações são reconciliadas automaticamente após os pushes. O script `test-flow-eks.sh` também depende desse domínio, então a sincronização via Argo CD garante que os serviços estejam prontos antes dos testes.
 4. **Pipeline de testes**  
    - `test-flow-eks.sh` faz healthcheck, cria a API key, define flag/regra e dispara a avaliação final utilizando as URLs públicas com o path correto.
 5. **Escalonamento inteligente**  
@@ -69,7 +69,7 @@ Esse repositório reúne a solução da **Fase 2 do Tech Challenge**: transforma
 
 - **Security**: todos os secrets passam pelo External Secrets + IAM/IRSA.  
 - **Escalabilidade**: os serviços críticos têm HPAs, e o `analytics-service` usa KEDA para escalar de 0 para N.  
-- **Domínio**: `desafio.jhousyfran.click` mapeia `/auth`, `/flag`, `/targeting`, `/evaluation` e `/analytics`.  
+- **Domínio**: `desafio.yuricarmo.click` mapeia `/auth`, `/flag`, `/targeting`, `/evaluation` e `/analytics`.  
 - **Fluxo de uso**: admin gera chave no `auth-service`; `flag-service` e `targeting-service` usam essa chave protegida; `evaluation-service` chama `flag` e `targeting` internamente; `analytics-service` consome SQS e escreve no DynamoDB.
 
 Para detalhes sobre a proposta original, veja o PDF `POSTECH - Tech Challenge - Fase 2.pdf` na raiz.

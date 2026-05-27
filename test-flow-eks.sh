@@ -4,10 +4,10 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
-AUTH_URL="${AUTH_URL:-https://desafio.jhousyfran.click/auth}"
-FLAG_URL="${FLAG_URL:-https://desafio.jhousyfran.click/flag}"
-TARGETING_URL="${TARGETING_URL:-https://desafio.jhousyfran.click/targeting}"
-EVAL_URL="${EVAL_URL:-https://desafio.jhousyfran.click/evaluation}"
+AUTH_URL="${AUTH_URL:-https://desafio.yuricarmo.click/auth}"
+FLAG_URL="${FLAG_URL:-https://desafio.yuricarmo.click/flag}"
+TARGETING_URL="${TARGETING_URL:-https://desafio.yuricarmo.click/targeting}"
+EVAL_URL="${EVAL_URL:-https://desafio.yuricarmo.click/evaluation}"
 
 SERVICE_API_KEY="${SERVICE_API_KEY:-}"
 MASTER_KEY="${MASTER_KEY:-admin-secreto-123}"
