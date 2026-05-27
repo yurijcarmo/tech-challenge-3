@@ -27,7 +27,7 @@ resource "aws_route53_record" "argocd_validation" {
     }
   }
 
-  zone_id = data.aws_route53_zone.main.zone_id
+  zone_id = aws_route53_zone.main.zone_id
   name    = each.value.name
   type    = each.value.type
   ttl     = 60
@@ -55,7 +55,7 @@ resource "aws_route53_record" "apps_validation" {
     }
   }
 
-  zone_id = data.aws_route53_zone.main.zone_id
+  zone_id = aws_route53_zone.main.zone_id
   name    = each.value.name
   type    = each.value.type
   ttl     = 60
@@ -168,7 +168,7 @@ resource "aws_iam_policy" "external_dns" {
           "route53:ChangeResourceRecordSets"
         ]
         Resource = [
-          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.main.zone_id}"
+          "arn:aws:route53:::hostedzone/${aws_route53_zone.main.zone_id}"
         ]
       },
       {

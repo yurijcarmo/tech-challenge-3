@@ -7,9 +7,8 @@ data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
 
-# Busca a zona pelo nome do domínio raiz — evita depender do zone_id hardcoded
-# que muda entre sessões do AWS Academy
-data "aws_route53_zone" "main" {
-  name         = local.argocd_root_domain
-  private_zone = false
+# Cria a zona hospedada se não existir — necessário no AWS Academy onde a conta
+# é resetada entre sessões
+resource "aws_route53_zone" "main" {
+  name = local.argocd_root_domain
 }
