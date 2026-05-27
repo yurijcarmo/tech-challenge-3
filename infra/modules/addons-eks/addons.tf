@@ -157,10 +157,9 @@ resource "kubernetes_service_account_v1" "external_secrets" {
 }
 
 resource "helm_release" "external_secrets" {
-  name         = "external-secrets"
-  repository   = "https://charts.external-secrets.io"
-  chart        = "external-secrets"
-  version      = "0.10.4"
+  name    = "external-secrets"
+  chart   = "oci://ghcr.io/external-secrets/charts/external-secrets"
+  version = "0.10.4"
   namespace    = "external-secrets"
   wait         = true
   timeout      = 600
