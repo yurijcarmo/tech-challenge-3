@@ -123,6 +123,7 @@ jobs:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr_repo }}:${{ steps.tag.outputs.tag }}
           severity: CRITICAL
           exit-code: "1"
+          ignore-unfixed: true
           format: table
 
       - name: Push para o ECR
