@@ -10,6 +10,10 @@ on:
     paths:
       - "evaluation-service/**"
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   ci:
     uses: ./.github/workflows/_ci-go.yml
