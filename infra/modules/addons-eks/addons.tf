@@ -232,11 +232,23 @@ resource "kubernetes_manifest" "external_secrets_cluster_store" {
         aws = {
           service = "SecretsManager"
           region  = data.aws_region.current.id
+          # AWS ACADEMY: sem IRSA — usa secretRef com credenciais temporárias da sessão
           auth = {
-            jwt = {
-              serviceAccountRef = {
-                name      = "external-secrets"
+            secretRef = {
+              accessKeyIDSecretRef = {
+                name      = "aws-credentials"
                 namespace = "external-secrets"
+                key       = "access-key"
+              }
+              secretAccessKeySecretRef = {
+                name      = "aws-credentials"
+                namespace = "external-secrets"
+                key       = "secret-access-key"
+              }
+              sessionTokenSecretRef = {
+                name      = "aws-credentials"
+                namespace = "external-secrets"
+                key       = "session-token"
               }
             }
           }

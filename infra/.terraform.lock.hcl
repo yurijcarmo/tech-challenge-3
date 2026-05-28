@@ -1,24 +1,6 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
 
-provider "registry.terraform.io/argoproj-labs/argocd" {
-  version     = "7.0.1"
-  constraints = "7.0.1"
-  hashes = [
-    "h1:KTFH/XH9n4LtcdekAjldWuT2yARhrUbMTtTtbP3xeCs=",
-    "zh:149d7b7d3de219803b2b98900fc15d4e47588869f96f6e10034c214fcb70c2fd",
-    "zh:40c350f5045fdb7fbf504071ab12c23c4035fa2d98439ad3d60249dc9285a6b8",
-    "zh:4cd32d817207eed2b8843b13667c8a6eb1821ca22ff471ae7417f435a5c3a3b0",
-    "zh:63588c2466f0bb338ecfe0f14bd4dce7d9f89c58e5d031eb49c72405819953a6",
-    "zh:70f6db23c975ad3c79ba29f6a1a4028cb8195820f905ea5a933af3b5cc41ac84",
-    "zh:92596c336afffbe7690b48b887aa9e6c76a4b9bf3be6d2f0fa93ee0e32607cc6",
-    "zh:a6ef3254787381defbd8f37ac25238bf75b109e209e65946969650097deb3353",
-    "zh:baef40cd1dfe177a2279b169d88020d1ef6ebdf7e1fb65c149ce67ebdf1d2bca",
-    "zh:d5a4c470fd14a2e713c6c829d2092e623f910412c9cefb956a0276d76ca3e421",
-    "zh:dc9f50516ab759c55cd9f8ccdd43b3e506e7c761ecfddd525d0ea237bfec058d",
-  ]
-}
-
 provider "registry.terraform.io/hashicorp/aws" {
   version     = "6.27.0"
   constraints = "6.27.0"
