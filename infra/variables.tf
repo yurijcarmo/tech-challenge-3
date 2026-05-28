@@ -50,3 +50,9 @@ variable "argocd_repo_url" {
   description = "Repositorio Git com os manifests das apps"
   type        = string
 }
+
+variable "db_password" {
+  description = "Senha dos bancos de dados RDS (nao commitar — definir no terraform.tfvars)"
+  type        = string
+  sensitive   = true
+}

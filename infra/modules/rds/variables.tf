@@ -23,6 +23,7 @@ variable "dbs_config" {
     storage        = number
     instance_class = string
     username       = string
+    password       = string
   }))
 
 }

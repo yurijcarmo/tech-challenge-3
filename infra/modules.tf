@@ -71,6 +71,7 @@ module "databases" {
       storage        = 10
       instance_class = "db.t3.micro"
       username       = "appuser"
+      password       = var.db_password
     },
     {
       name           = "flag"
@@ -79,6 +80,7 @@ module "databases" {
       storage        = 20
       instance_class = "db.t3.micro"
       username       = "appuser"
+      password       = var.db_password
     },
 
     {
@@ -88,6 +90,7 @@ module "databases" {
       storage        = 20
       instance_class = "db.t3.micro"
       username       = "appuser"
+      password       = var.db_password
     }
   ]
 }

@@ -13,3 +13,6 @@ apps_domain = "desafio.seudominio.com"
 
 # URL do repositório GitOps (onde estão os manifestos k8s/)
 argocd_repo_url = "https://github.com/seu-usuario/seu-repo-gitops"
+
+# Senha dos bancos de dados RDS (usar valor forte em produção)
+db_password = "SenhaForte@2026!"
