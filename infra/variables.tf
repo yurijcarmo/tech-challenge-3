@@ -43,6 +43,9 @@ variable "apps_domain" {
   type        = string
 }
 
+
+
+
 variable "argocd_repo_url" {
   description = "Repositorio Git com os manifests das apps"
   type        = string
