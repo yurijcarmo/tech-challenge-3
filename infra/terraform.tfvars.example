@@ -1,0 +1,15 @@
+prefix       = "terraform"
+project      = "eks-setup"
+environment  = "dev"
+aws_region   = "us-east-1"
+cluster_name = "eks-cluster"
+cidr_block   = "10.0.0.0/16"
+
+# Domínio do ArgoCD (ex: argocd.seudominio.com)
+argocd_domain = "argocd.seudominio.com"
+
+# Domínio das aplicações (ex: desafio.seudominio.com)
+apps_domain = "desafio.seudominio.com"
+
+# URL do repositório GitOps (onde estão os manifestos k8s/)
+argocd_repo_url = "https://github.com/seu-usuario/seu-repo-gitops"

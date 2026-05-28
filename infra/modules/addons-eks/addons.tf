@@ -22,10 +22,11 @@ resource "helm_release" "ingress_nginx" {
   chart        = "ingress-nginx"
   version      = "4.10.1"
   namespace    = "ingress-nginx"
-  force_update = true
-  replace      = true # AWS ACADEMY: substitui release em estado failed
-  wait         = false # AWS ACADEMY: NLB demora para provisionar, não bloquear o apply
-  timeout      = 600
+  force_update      = true
+  replace           = true    # AWS ACADEMY: substitui release em estado failed
+  cleanup_on_fail   = true    # AWS ACADEMY: limpa recursos em caso de falha no upgrade
+  wait              = false   # AWS ACADEMY: NLB demora para provisionar, não bloquear o apply
+  timeout           = 600
 
   set = [
     {
