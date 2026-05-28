@@ -3,6 +3,6 @@ terraform {
     bucket       = "togglemaster-tfstate-yuri-1"
     key          = "eks-cluster/terraform.tfstate"
     region       = "us-east-1"
-    use_lockfile = true
+    use_lockfile = false # AWS ACADEMY: s3:PutObject no .tflock é bloqueado pela LabRole
   }
 }
