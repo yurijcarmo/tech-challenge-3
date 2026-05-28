@@ -10,37 +10,34 @@ resource "kubernetes_namespace_v1" "apps" {
   }
 }
 
-resource "argocd_application" "apps" {
+resource "kubernetes_manifest" "apps" {
   for_each = local.apps_by_name
 
-  metadata {
-    name      = each.value.name
-    namespace = "argocd"
-  }
-
-  spec {
-    project = var.argocd_project
-
-    source {
-      repo_url        = var.argocd_repo_url
-      path            = each.value.path
-      target_revision = var.target_revision
+  manifest = {
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "Application"
+    metadata = {
+      name      = each.value.name
+      namespace = "argocd"
     }
-
-    destination {
-      server    = "https://kubernetes.default.svc"
-      namespace = each.value.namespace
-    }
-
-    sync_policy {
-      automated {
-        prune     = true
-        self_heal = true
+    spec = {
+      project = var.argocd_project
+      source = {
+        repoURL        = var.argocd_repo_url
+        path           = each.value.path
+        targetRevision = var.target_revision
       }
-
-      sync_options = [
-        "CreateNamespace=true"
-      ]
+      destination = {
+        server    = "https://kubernetes.default.svc"
+        namespace = each.value.namespace
+      }
+      syncPolicy = {
+        automated = {
+          prune    = true
+          selfHeal = true
+        }
+        syncOptions = ["CreateNamespace=true"]
+      }
     }
   }
 

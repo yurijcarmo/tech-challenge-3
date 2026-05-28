@@ -43,23 +43,6 @@ variable "apps_domain" {
   type        = string
 }
 
-variable "argocd_server_addr" {
-  description = "Endereco do ArgoCD (ex: https://argocd.exemplo.com)"
-  type        = string
-}
-
-variable "argocd_auth_token" {
-  description = "Token de autenticacao para o provider do ArgoCD"
-  type        = string
-  sensitive   = true
-}
-
-variable "argocd_insecure" {
-  description = "Permitir TLS inseguro no provider do ArgoCD"
-  type        = bool
-  default     = true
-}
-
 variable "argocd_repo_url" {
   description = "Repositorio Git com os manifests das apps"
   type        = string
