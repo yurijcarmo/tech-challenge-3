@@ -199,6 +199,8 @@ resource "helm_release" "keda" {
   namespace    = "keda"
   force_update = true # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
   replace      = true # AWS ACADEMY: substitui release em estado failed
+  wait         = false # AWS ACADEMY: CRDs podem não estar prontos no timeout — evita "scaledobjects.keda.sh not found"
+  timeout      = 600
 
   set = [
     {
