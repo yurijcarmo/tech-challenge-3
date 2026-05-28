@@ -220,31 +220,29 @@ resource "kubernetes_namespace_v1" "keda" {
   }
 }
 
-resource "null_resource" "external_secrets_cluster_store" {
-  triggers = {
-    region = data.aws_region.current.id
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      aws eks update-kubeconfig --name ${var.eks_cluster_name} --region ${data.aws_region.current.id}
-      kubectl apply -f - <<EOF
-apiVersion: external-secrets.io/v1beta1
-kind: ClusterSecretStore
-metadata:
-  name: aws-secrets-manager
-spec:
-  provider:
-    aws:
-      service: SecretsManager
-      region: ${data.aws_region.current.id}
-      auth:
-        jwt:
-          serviceAccountRef:
-            name: external-secrets
-            namespace: external-secrets
-EOF
-    EOT
+resource "kubernetes_manifest" "external_secrets_cluster_store" {
+  manifest = {
+    apiVersion = "external-secrets.io/v1beta1"
+    kind       = "ClusterSecretStore"
+    metadata = {
+      name = "aws-secrets-manager"
+    }
+    spec = {
+      provider = {
+        aws = {
+          service = "SecretsManager"
+          region  = data.aws_region.current.id
+          auth = {
+            jwt = {
+              serviceAccountRef = {
+                name      = "external-secrets"
+                namespace = "external-secrets"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   depends_on = [
