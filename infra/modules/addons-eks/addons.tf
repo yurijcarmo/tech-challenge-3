@@ -23,7 +23,9 @@ resource "helm_release" "ingress_nginx" {
   version      = "4.10.1"
   namespace    = "ingress-nginx"
   force_update = true
-  replace      = true # AWS ACADEMY: substitui release em estado failed # AWS ACADEMY: evita erro "cannot re-use a name that is still in use"
+  replace      = true # AWS ACADEMY: substitui release em estado failed
+  wait         = false # AWS ACADEMY: NLB demora para provisionar, não bloquear o apply
+  timeout      = 600
 
   set = [
     {
