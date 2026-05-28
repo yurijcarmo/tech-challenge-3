@@ -21,7 +21,7 @@ spec:
           command:
             - sh
             - -c
-            - psql "$DATABASE_URL" -f /migrations/init.sql
+            - psql "postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME" -f /migrations/init.sql
           envFrom:
             - configMapRef:
                 name: auth-service-config
