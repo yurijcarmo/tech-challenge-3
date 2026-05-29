@@ -30,17 +30,17 @@ spec:
           volumeMounts:
             - name: db-init
               mountPath: /migrations
-          containers:
-            - name: targeting-service
-              image: 930110167229.dkr.ecr.us-east-1.amazonaws.com/targeting-service:v1.0.0-6927afc
-              imagePullPolicy: Always
-              resources:
-                requests:
-                  cpu: "100m"
-                  memory: "100Mi"
-                limits:
-                  cpu: "200m"
-                  memory: "250Mi"
+      containers:
+        - name: targeting-service
+          image: 930110167229.dkr.ecr.us-east-1.amazonaws.com/targeting-service:v1.0.0-6927afc
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "100Mi"
+            limits:
+              cpu: "200m"
+              memory: "250Mi"
           ports:
             - containerPort: 8003
           envFrom:
