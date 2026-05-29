@@ -33,6 +33,9 @@ spec:
                 name: evaluation-service-config
             - secretRef:
                 name: evaluation-service-secrets
+          env:
+            - name: REDIS_URL
+              value: "redis://$(REDIS_HOST):$(REDIS_PORT)"
           readinessProbe:
             httpGet:
               path: /health
