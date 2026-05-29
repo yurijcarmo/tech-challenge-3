@@ -1,1 +1,8 @@
 RELATORIO_ACADEMICO.md
+
+# Compiled binaries
+auth-service/auth-service
+evaluation-service/evaluation-service
+*.pdf
+*.code-workspace
+Alternatively,
