@@ -42,8 +42,8 @@ func (a *App) validateKeyHandler(w http.ResponseWriter, r *http.Request) {
 	// DEMO APRESENTAÇÃO: para simular SQL injection, comente as 2 linhas da query parametrizada
 	// abaixo e descomente as 2 linhas da query vulnerável. Isso vai quebrar o gosec na pipe.
 	//
-	query := "SELECT id FROM api_keys WHERE key_hash = '" + keyHash + "' AND is_active = true"
-	err := a.DB.QueryRow(query).Scan(&id)
+	// query := "SELECT id FROM api_keys WHERE key_hash = '" + keyHash + "' AND is_active = true"
+	// err := a.DB.QueryRow(query).Scan(&id)
 
 	// Verifica se o hash existe no banco de dados (query parametrizada — versão segura)
 	var id int
