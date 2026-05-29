@@ -32,7 +32,7 @@ spec:
               mountPath: /migrations
       containers:
         - name: auth-service
-          image: 930110167229.dkr.ecr.us-east-1.amazonaws.com/auth-service:v1.0.0-ecb74ec
+          image: 629617923234.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
           imagePullPolicy: Always
           resources:
             requests:
@@ -43,6 +43,9 @@ spec:
               memory: "250Mi"
           ports:
             - containerPort: 8001
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
           envFrom:
             - configMapRef:
                 name: auth-service-config

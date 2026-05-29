@@ -32,7 +32,7 @@ spec:
               mountPath: /migrations
       containers:
         - name: flag-service
-          image: 930110167229.dkr.ecr.us-east-1.amazonaws.com/flag-service:v1.0.0-ea26e55
+          image: 930110167229.dkr.ecr.us-east-1.amazonaws.com/flag-service:v1.0.0-fd11f0c
           imagePullPolicy: Always
           resources:
             requests:
@@ -43,6 +43,9 @@ spec:
               memory: "250Mi"
           ports:
             - containerPort: 8002
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
           envFrom:
             - configMapRef:
                 name: flag-service-config
